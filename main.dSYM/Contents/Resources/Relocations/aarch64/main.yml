@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/giorgostsorakos/Documents/C++/Neural-Network/main'
+relocations:     []
+...
