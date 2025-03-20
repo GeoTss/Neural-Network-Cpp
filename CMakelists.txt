@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.11)
 project(Neural_Network LANGUAGES CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_library(Neural_Network INTERFACE)
 
 # set_property(TARGET main PROPERTY CXX_STANDARD 20)
@@ -11,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3 QUIET)
 
 if(NOT Eigen3_FOUND)
 
@@ -25,12 +27,20 @@ if(NOT Eigen3_FOUND)
     FetchContent_MakeAvailable(Eigen3)
 
     set(Eigen3_INCLUDE_DIR ${eigen_SOURCE_DIR})
+else()
+    message(STATUS "Eigen found!")
+    get_target_property(Eigen3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
 endif()
+
+message(STATUS "Eigen directory: ${Eigen3_INCLUDE_DIR}")
 
 find_package(Vulkan REQUIRED)
 if(NOT Vulkan_FOUND)
     message(FATAL_ERROR "Vulkan not found! Please install it via the VulkanSDK")
 endif()
+
+get_target_property(Vulkan_INCLUDE_DIRS Vulkan::Vulkan INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "Vulkan directory: ${Vulkan_INCLUDE_DIRS}")
 
 target_include_directories(Neural_Network INTERFACE
     ${Eigen3_INCLUDE_DIR}
@@ -38,6 +48,5 @@ target_include_directories(Neural_Network INTERFACE
 )
 
 target_link_libraries(Neural_Network INTERFACE
-    Eigen3::Eigen
     Vulkan::Vulkan
 )
