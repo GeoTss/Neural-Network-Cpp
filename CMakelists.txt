@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.11)
+project(Neural_Network LANGUAGES CXX)
+
+add_library(Neural_Network INTERFACE)
+
+# set_property(TARGET main PROPERTY CXX_STANDARD 20)
+# set_property(TARGET main PROPERTY CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+find_package(Eigen3 REQUIRED)
+
+if(NOT Eigen3_FOUND)
+
+    message(WARNING "Eigen not found! Fetching Eigen3 from GitHub...")
+
+    FetchContent_Declare(
+        Eigen3
+        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+        GIT_TAG 3.4.0  # Change this to the version you want
+    )
+    FetchContent_MakeAvailable(Eigen3)
+
+    set(Eigen3_INCLUDE_DIR ${eigen_SOURCE_DIR})
+endif()
+
+find_package(Vulkan REQUIRED)
+if(NOT Vulkan_FOUND)
+    message(FATAL_ERROR "Vulkan not found! Please install it via the VulkanSDK")
+endif()
+
+target_include_directories(Neural_Network INTERFACE
+    ${Eigen3_INCLUDE_DIR}
+    ${Vulkan_INCLUDE_DIRS}
+)
+
+target_link_libraries(Neural_Network INTERFACE
+    Eigen3::Eigen
+    Vulkan::Vulkan
+)
